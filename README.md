@@ -1,6 +1,6 @@
 # Project Synapse
 
-Version: `v0.2.2`
+Version: `v0.2.3`
 Release Date: `2026-06-04`
 Status: `Public research release candidate`
 
@@ -54,7 +54,7 @@ The code currently explores that question through three architectural components
 
 ## Release Scope
 
-`v0.2.2` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
+`v0.2.3` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
 
 1. Advisor review
 2. Early open-source release
@@ -102,6 +102,14 @@ This release still has important limitations:
 2. Several legacy configs are exploratory and may require local path fixes, dataset preparation, or additional code work.
 3. Some planned multimodal and detection paths remain partial or aspirational.
 4. The repo now supports resource-aware experiments, but it does not yet include the broader baseline suite promised in the longer-term roadmap.
+
+## Recent Integrity Fixes
+
+The `v0.2.3` release tightens several semantics that matter for research correctness:
+
+1. per-sample generated weights are now handled explicitly instead of being silently collapsed to the first sample,
+2. processor-to-input routing can now be declared explicitly through `input_key_map`,
+3. ledger cache keys now preserve processor order and store cached weights on CPU.
 
 ## Repository Layout
 
@@ -216,18 +224,19 @@ This release includes:
 
 1. Research positioning: [04_RESEARCH_POSITIONING_v1.0.md](04_RESEARCH_POSITIONING_v1.0.md)
 2. Changelog: [CHANGELOG.md](CHANGELOG.md)
-3. Release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
-4. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
-5. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
-6. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
-7. Verified public results: [RESULTS_v0.2.1.md](RESULTS_v0.2.1.md)
-8. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-9. Authors: [AUTHORS.md](AUTHORS.md)
-10. Citation metadata: [CITATION.cff](CITATION.cff)
-11. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
-12. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-13. Security policy: [SECURITY.md](SECURITY.md)
-14. Version marker: [VERSION](VERSION)
+3. Release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
+4. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
+5. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
+6. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
+7. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
+8. Verified public results: [RESULTS_v0.2.3.md](RESULTS_v0.2.3.md)
+9. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+10. Authors: [AUTHORS.md](AUTHORS.md)
+11. Citation metadata: [CITATION.cff](CITATION.cff)
+12. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
+13. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+14. Security policy: [SECURITY.md](SECURITY.md)
+15. Version marker: [VERSION](VERSION)
 
 ## Recommended Interpretation
 

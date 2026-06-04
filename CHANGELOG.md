@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on semantic versioning with project-stage labels for research releases.
 
+## [0.2.3] - 2026-06-04
+
+### Added
+
+1. Targeted tests for per-sample head weights, explicit multimodal input routing, cache-key ordering, CPU-safe ledger storage, and deterministic semantic placeholder behavior.
+2. `RELEASE_NOTES_v0.2.3.md` and `RESULTS_v0.2.3.md`.
+
+### Changed
+
+1. Added explicit `input_key_map` support to the substrate and public configs.
+2. Added correct per-sample execution when the weaver produces distinct weights across a batch.
+3. Made the semantic context placeholder deterministic instead of random.
+4. Preserved processor order in ledger cache keys and moved cached weights to CPU.
+5. Fixed training and evaluation loss averaging to divide by processed batches rather than planned batches.
+6. Renamed public experiment `project_name` values to version-neutral names.
+
+### Known Issues
+
+1. Semantic context is still placeholder logic.
+2. Legacy multimodal configs remain experimental.
+3. The project still lacks a formal baseline suite against adapters and LoRA.
+
 ## [0.2.2] - 2026-06-04
 
 ### Added

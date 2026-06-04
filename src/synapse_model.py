@@ -1,27 +1,49 @@
 # File: src/synapse_model.py (Adjusted Ledger Calls)
 import torch
 import torch.nn as nn
-from collections import OrderedDict # Ensure OrderedDict is imported
 
 from . import fabric_substrate, fabric_weaver, fabric_ledger, resource_monitor
-from . import input_processors, task_heads 
 
-class SemanticContextExtractor(nn.Module): # Keep placeholder as before
+class SemanticContextExtractor(nn.Module):
     def __init__(self, config, device):
         super().__init__()
         self.config = config
         self.device = device
         self.output_dim = config.get('output_dim', 0) 
         if self.output_dim > 0:
-            print(f"SemanticContextExtractor: Initialized (output_dim={self.output_dim}). Placeholder implementation.")
+            print(
+                f"SemanticContextExtractor: Initialized (output_dim={self.output_dim}). "
+                "Using deterministic placeholder features."
+            )
         else:
             print("SemanticContextExtractor: Not enabled or output_dim is 0.")
 
     def forward(self, primary_input):
         if self.output_dim == 0:
             return None
-        batch_size = primary_input.size(0) if torch.is_tensor(primary_input) else 1
-        return torch.rand(batch_size, self.output_dim, device=self.device)
+        if not torch.is_tensor(primary_input):
+            return torch.zeros(1, self.output_dim, device=self.device)
+
+        features = primary_input.float()
+        if features.dim() == 1:
+            features = features.unsqueeze(0)
+        flat = features.view(features.size(0), -1)
+        if flat.size(1) == 0:
+            return torch.zeros(flat.size(0), self.output_dim, device=self.device)
+
+        summary = torch.stack(
+            [
+                flat.mean(dim=1),
+                flat.std(dim=1, unbiased=False),
+                flat.min(dim=1).values,
+                flat.max(dim=1).values,
+            ],
+            dim=1,
+        )
+
+        repeats = (self.output_dim + summary.size(1) - 1) // summary.size(1)
+        expanded = summary.repeat(1, repeats)
+        return expanded[:, : self.output_dim].to(self.device)
 
 
 class SynapseModel(nn.Module):
@@ -83,6 +105,24 @@ class SynapseModel(nn.Module):
         self.to(self.device)
         print(f"SynapseModel (Dynamic Orchestrator) assembled and moved to device: {self.device}")
 
+    def _build_blueprint_signals(self, task_def):
+        blueprint = {
+            'input_processor_names': task_def['input_processor_names'],
+            'head_name': task_def['head_name'],
+            'fusion_strategy': self.config['model']['substrate'].get('fusion_type', 'concat'),
+        }
+        if 'input_key_map' in task_def:
+            blueprint['input_key_map'] = task_def['input_key_map']
+        return blueprint
+
+    def _can_share_weights_across_batch(self, semantic_context_batched):
+        if semantic_context_batched is None or semantic_context_batched.size(0) <= 1:
+            return True
+        return bool(torch.allclose(
+            semantic_context_batched,
+            semantic_context_batched[0].unsqueeze(0).expand_as(semantic_context_batched),
+        ))
+
     def _get_task_definition(self, task_id_scalar):
         if task_id_scalar not in self.tasks_config_map:
             raise ValueError(f"Task ID {task_id_scalar} not found in config['tasks']. Available: {list(self.tasks_config_map.keys())}")
@@ -106,33 +146,28 @@ class SynapseModel(nn.Module):
                 semantic_context_for_weaver_batched = torch.zeros(batch_size, self.semantic_context_dim, device=self.device)
         
         task_def = self._get_task_definition(task_id_scalar)
-        blueprint_signals_dict = { # This is the blueprint_dict
-            'input_processor_names': task_def['input_processor_names'],
-            'head_name': task_def['head_name'],
-            'fusion_strategy': self.config['model']['substrate'].get('fusion_type', 'concat')
-        }
+        blueprint_signals_dict = self._build_blueprint_signals(task_def)
         
         target_head_shapes = self.substrate.get_head_parameter_shapes(blueprint_signals_dict['head_name'])
+        can_share_weights = self._can_share_weights_across_batch(semantic_context_for_weaver_batched)
 
-        # Create hashable tuples for ledger key components from unbatched/representative context
-        dev_ctx_tuple = tuple(round(x.item(), 4) for x in device_context_unbatched) if device_context_unbatched is not None else None
-        sem_ctx_tuple = tuple(round(x.item(), 4) for x in semantic_context_unbatched_for_key) if semantic_context_unbatched_for_key is not None else None
-        
-        blueprint_items = []
-        for k_bp, v_bp in sorted(blueprint_signals_dict.items()):
-            if isinstance(v_bp, list): blueprint_items.append((k_bp, tuple(sorted(v_bp))))
-            else: blueprint_items.append((k_bp, v_bp))
-        blueprint_tuple = tuple(blueprint_items)
-        
-        # Store components needed for potential caching by trainer
-        self.last_key_components_for_cache = (
-            task_id_scalar, 
-            device_context_unbatched, # Store original tensor for store method
-            semantic_context_unbatched_for_key, # Store original tensor for store method
-            blueprint_signals_dict # Store original dict for store method
-        )
+        self.last_key_components_for_cache = None
+        if can_share_weights:
+            self.last_key_components_for_cache = (
+                task_id_scalar,
+                device_context_unbatched,
+                semantic_context_unbatched_for_key,
+                blueprint_signals_dict,
+            )
 
-        cached_weights = self.ledger.retrieve(task_id_scalar, dev_ctx_tuple, sem_ctx_tuple, blueprint_tuple)
+        cached_weights = None
+        if can_share_weights:
+            cached_weights = self.ledger.retrieve(
+                task_id_scalar,
+                device_context_unbatched,
+                semantic_context_unbatched_for_key,
+                blueprint_signals_dict,
+            )
         
         head_weights_to_use = None
         if cached_weights:
@@ -149,17 +184,17 @@ class SynapseModel(nn.Module):
                 target_head_shapes
             )
             
-            # Weaver returns a list of dicts if batch_size > 1, or single dict if batch_size = 1
-            # Substrate expects a single dict if weights are shared across batch, or per-sample logic
-            # For now, assume head_weights are shared for the batch for simplicity in Substrate
-            # So, we take the first set of weights if Weaver produced a batch of them.
-            if isinstance(head_weights_list_or_dict, list):
-                head_weights_to_use = head_weights_list_or_dict[0] 
+            if isinstance(head_weights_list_or_dict, list) and can_share_weights:
+                head_weights_to_use = head_weights_list_or_dict[0]
             else:
                 head_weights_to_use = head_weights_list_or_dict
 
             self.last_used_from_cache = False
-            self.last_weights_generated = head_weights_to_use
+            self.last_weights_generated = (
+                head_weights_to_use[0]
+                if isinstance(head_weights_to_use, list)
+                else head_weights_to_use
+            )
             
         output = self.substrate.forward(inputs_dict, blueprint_signals_dict, head_weights_to_use)
         return output

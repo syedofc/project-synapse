@@ -1,4 +1,4 @@
-project_name: "Synapse_Public_Digits_v0_2_0"
+project_name: "Synapse_Public_Digits"
 seed: 42
 checkpoint_dir: "checkpoints/public_digits"
 
@@ -47,6 +47,8 @@ tasks:
     id: 0
     data_loader_func: "get_digits_loaders"
     input_processor_names: ["Digits_Feature_Identity"]
+    input_key_map:
+      Digits_Feature_Identity: "features"
     head_name: "Digits_Classifier_Head"
     loss_function: "CrossEntropyLoss"
     metrics: ["accuracy"]

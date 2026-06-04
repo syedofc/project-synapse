@@ -98,6 +98,86 @@ class NeuralSubstrate(nn.Module):
         # TODO: Implement more sophisticated fusion modules if needed
         # For now, simple concatenation will be handled in the forward pass if multiple features
 
+    def _resolve_input_key(self, processor_name, inputs_dict, input_key_map):
+        if input_key_map:
+            if processor_name not in input_key_map:
+                raise ValueError(
+                    f"Processor '{processor_name}' is missing an explicit input mapping."
+                )
+            input_key = input_key_map[processor_name]
+            if input_key not in inputs_dict:
+                raise ValueError(
+                    f"Input key '{input_key}' for processor '{processor_name}' not found in inputs_dict."
+                )
+            return input_key
+
+        if processor_name in inputs_dict:
+            return processor_name
+
+        if len(inputs_dict) == 1:
+            return next(iter(inputs_dict.keys()))
+
+        raise ValueError(
+            "Multiple inputs were provided without an explicit 'input_key_map'. "
+            "Please define processor-to-input bindings in the task config."
+        )
+
+    def _slice_inputs_for_sample(self, inputs_dict, sample_idx):
+        sample_inputs = {}
+        for key, value in inputs_dict.items():
+            if torch.is_tensor(value):
+                sample_inputs[key] = value[sample_idx : sample_idx + 1]
+            else:
+                sample_inputs[key] = value
+        return sample_inputs
+
+    def _forward_single(self, inputs_dict, blueprint_signals, head_weights_dict):
+        processed_features_list = []
+        if not isinstance(blueprint_signals.get('input_processor_names'), list) or \
+           not blueprint_signals['input_processor_names']:
+            raise ValueError("Blueprint must specify at least one 'input_processor_names' as a list.")
+
+        input_key_map = blueprint_signals.get("input_key_map", {})
+
+        for processor_name in blueprint_signals['input_processor_names']:
+            if processor_name not in self.input_processor_modules:
+                raise ValueError(f"Input processor '{processor_name}' not found in blueprint.")
+
+            input_key_for_processor = self._resolve_input_key(
+                processor_name,
+                inputs_dict,
+                input_key_map,
+            )
+
+            processor = self.input_processor_modules[processor_name]
+            raw_input = inputs_dict[input_key_for_processor]
+            features = processor(raw_input)
+            processed_features_list.append(features)
+
+        if len(processed_features_list) == 0:
+            raise ValueError("No features processed from input processors.")
+        elif len(processed_features_list) == 1:
+            fused_features = processed_features_list[0]
+        else:
+            fusion_strategy = blueprint_signals.get('fusion_strategy', 'concat')
+            if fusion_strategy == 'concat':
+                flat_features_list = []
+                for feat in processed_features_list:
+                    if feat.dim() > 2:
+                        flat_features_list.append(torch.flatten(feat, 1))
+                    else:
+                        flat_features_list.append(feat)
+                fused_features = torch.cat(flat_features_list, dim=1)
+            else:
+                raise ValueError(f"Unsupported fusion strategy: {fusion_strategy}")
+
+        head_name = blueprint_signals.get('head_name')
+        if not head_name or head_name not in self.task_head_modules:
+            raise ValueError(f"Head '{head_name}' not found or specified in blueprint.")
+
+        selected_head = self.task_head_modules[head_name]
+        return selected_head(fused_features, head_weights_dict)
+
     def get_head_parameter_shapes(self, head_name):
         """
         Gets the parameter shapes for a specific, named head.
@@ -131,68 +211,29 @@ class NeuralSubstrate(nn.Module):
         Returns:
             torch.Tensor: The final output of the assembled network.
         """
-        
-        # --- 1. Select and Run Input Processor(s) ---
-        processed_features_list = []
-        if not isinstance(blueprint_signals.get('input_processor_names'), list) or \
-           not blueprint_signals['input_processor_names']:
-            raise ValueError("Blueprint must specify at least one 'input_processor_names' as a list.")
+        if isinstance(head_weights_dict, list):
+            if not inputs_dict:
+                raise ValueError("Per-sample head weights require a non-empty inputs_dict.")
 
-        for i, processor_name in enumerate(blueprint_signals['input_processor_names']):
-            if processor_name not in self.input_processor_modules:
-                raise ValueError(f"Input processor '{processor_name}' not found in blueprint.")
-            
-            # Determine the correct input key for this processor
-            # This assumes a convention, e.g., if processor_name is "A2D2_Camera_MobileNetV2_FeatExtractor",
-            # it expects an input from inputs_dict['camera_image'] or similar.
-            # For simplicity, let's assume inputs_dict keys match processor names or a defined mapping.
-            # A more robust system would have this mapping in the task config.
-            # For now, if only one processor, use the first key in inputs_dict.
-            # If multiple, this needs careful handling.
-            
-            # Simple heuristic for now:
-            input_key_for_processor = list(inputs_dict.keys())[i] if len(inputs_dict.keys()) > i else list(inputs_dict.keys())[0]
-            if input_key_for_processor not in inputs_dict:
-                 raise ValueError(f"Input data for key '{input_key_for_processor}' (for processor '{processor_name}') not found in inputs_dict.")
+            first_tensor = next(
+                (value for value in inputs_dict.values() if torch.is_tensor(value)),
+                None,
+            )
+            if first_tensor is None:
+                raise ValueError("Could not infer batch size because inputs_dict has no tensor values.")
 
-            processor = self.input_processor_modules[processor_name]
-            raw_input = inputs_dict[input_key_for_processor]
-            features = processor(raw_input)
-            processed_features_list.append(features)
+            batch_size = first_tensor.size(0)
+            if len(head_weights_dict) != batch_size:
+                raise ValueError(
+                    f"Received {len(head_weights_dict)} per-sample weight sets for batch_size={batch_size}."
+                )
 
-        # --- 2. Fuse Features (if multi-modal) ---
-        if len(processed_features_list) == 0:
-            raise ValueError("No features processed from input processors.")
-        elif len(processed_features_list) == 1:
-            fused_features = processed_features_list[0]
-        else:
-            # Multi-modal: Implement fusion strategy based on blueprint_signals['fusion_strategy']
-            fusion_strategy = blueprint_signals.get('fusion_strategy', 'concat')
-            if fusion_strategy == 'concat':
-                # Ensure features can be concatenated (e.g., all flat vectors, or feature maps of same H,W)
-                # This might require processors to output compatible shapes or further processing here.
-                # For now, simple flatten and concat if they are maps of different spatial sizes
-                flat_features_list = []
-                for feat in processed_features_list:
-                    if feat.dim() > 2: # If it's a feature map BxCxHxW
-                        flat_features_list.append(torch.flatten(feat, 1))
-                    else: # Already a vector BxFeatures
-                        flat_features_list.append(feat)
-                fused_features = torch.cat(flat_features_list, dim=1)
-            # elif fusion_strategy == 'attention':
-            #     # TODO: Implement attention-based fusion module
-            #     pass
-            else:
-                raise ValueError(f"Unsupported fusion strategy: {fusion_strategy}")
-        
-        # --- 3. Select Head and Apply Weights ---
-        head_name = blueprint_signals.get('head_name')
-        if not head_name or head_name not in self.task_head_modules:
-            raise ValueError(f"Head '{head_name}' not found or specified in blueprint.")
-        
-        selected_head = self.task_head_modules[head_name]
-        
-        # The selected_head's forward method now takes the features and the generated weights
-        output = selected_head(fused_features, head_weights_dict)
-            
-        return output
+            sample_outputs = []
+            for sample_idx, sample_weights in enumerate(head_weights_dict):
+                sample_inputs = self._slice_inputs_for_sample(inputs_dict, sample_idx)
+                sample_outputs.append(
+                    self._forward_single(sample_inputs, blueprint_signals, sample_weights)
+                )
+            return torch.cat(sample_outputs, dim=0)
+
+        return self._forward_single(inputs_dict, blueprint_signals, head_weights_dict)

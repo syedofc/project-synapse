@@ -5,7 +5,25 @@ It now uses a more comprehensive key structure including task_id, device_context
 semantic_context (if available), and blueprint_signals.
 """
 from collections import OrderedDict
-import torch
+
+
+def _freeze_nested(value):
+    if isinstance(value, dict):
+        return tuple((key, _freeze_nested(nested)) for key, nested in sorted(value.items()))
+    if isinstance(value, (list, tuple)):
+        return tuple(_freeze_nested(item) for item in value)
+    return value
+
+
+def _freeze_context_vector(value):
+    if value is None:
+        return None
+    if hasattr(value, "detach"):
+        value = value.detach().cpu().view(-1)
+        return tuple(round(item.item(), 4) for item in value)
+    if isinstance(value, (list, tuple)):
+        return tuple(round(float(item), 4) for item in value)
+    return value
 
 class SynapticLedger:
     def __init__(self, capacity):
@@ -13,17 +31,19 @@ class SynapticLedger:
         self.cache = OrderedDict()
         print(f"SynapticLedger initialized with capacity for {capacity} configurations.")
 
-    def _create_key(self, task_id_scalar, device_context_tuple, semantic_context_tuple, blueprint_tuple):
+    def _create_key(self, task_id_scalar, device_context, semantic_context, blueprint_signals):
         """
         Creates a hashable key from all relevant components.
         
         Args:
             task_id_scalar (int): The scalar ID of the task.
-            device_context_tuple (tuple): Hashable tuple of device context.
-            semantic_context_tuple (tuple or None): Hashable tuple of semantic context, or None.
-            blueprint_tuple (tuple): Hashable tuple of blueprint signals (e.g., from sorted dict items).
+            device_context: Tensor or hashable representation of device context.
+            semantic_context: Tensor or hashable representation of semantic context.
+            blueprint_signals: Blueprint dictionary or already-frozen representation.
         """
-        # Ensure all parts of the key are hashable and consistently ordered
+        device_context_tuple = _freeze_context_vector(device_context)
+        semantic_context_tuple = _freeze_context_vector(semantic_context)
+        blueprint_tuple = _freeze_nested(blueprint_signals)
         return (task_id_scalar, device_context_tuple, semantic_context_tuple, blueprint_tuple)
 
     def store(self, task_id_scalar, device_context_tensor, semantic_context_tensor, 
@@ -41,38 +61,30 @@ class SynapticLedger:
         if self.capacity == 0:
             return
 
-        # Create hashable tuples for key components
-        dev_ctx_tuple = tuple(round(x.item(), 4) for x in device_context_tensor) if device_context_tensor is not None else None
-        sem_ctx_tuple = tuple(round(x.item(), 4) for x in semantic_context_tensor) if semantic_context_tensor is not None else None
+        key = self._create_key(
+            task_id_scalar,
+            device_context_tensor,
+            semantic_context_tensor,
+            blueprint_signals_dict,
+        )
         
-        # Ensure blueprint_signals_dict is consistently ordered for the key
-        # Convert dict items to sorted tuple of tuples: ((key1, val1), (key2, val2))
-        # If vals can be lists, convert them to tuples too.
-        blueprint_items = []
-        for k, v in sorted(blueprint_signals_dict.items()):
-            if isinstance(v, list):
-                blueprint_items.append((k, tuple(sorted(v)))) # Sort lists for consistency
-            else:
-                blueprint_items.append((k, v))
-        blueprint_tuple = tuple(blueprint_items)
+        detached_weights = OrderedDict(
+            (k, v.detach().cpu().clone()) for k, v in weights_dict.items()
+        )
+        self.cache[key] = detached_weights
 
-        key = self._create_key(task_id_scalar, dev_ctx_tuple, sem_ctx_tuple, blueprint_tuple)
-        
-        detached_weights = OrderedDict([(k, v.detach().clone()) for k, v in weights_dict.items()])
-        self.cache[key] = detached_weights # Store the head_weights_dict directly
-        
         if len(self.cache) > self.capacity:
             self.cache.popitem(last=False)
 
-    def retrieve(self, task_id_scalar, device_context_tuple, semantic_context_tuple, blueprint_tuple):
+    def retrieve(self, task_id_scalar, device_context, semantic_context, blueprint_signals):
         """
         Retrieves a weight configuration from the cache.
 
         Args:
             task_id_scalar (int): The scalar ID of the task.
-            device_context_tuple (tuple): Hashable tuple of device context.
-            semantic_context_tuple (tuple or None): Hashable tuple of semantic context, or None.
-            blueprint_tuple (tuple): Hashable tuple of blueprint signals.
+            device_context: Tensor or hashable representation of device context.
+            semantic_context: Tensor or hashable representation of semantic context.
+            blueprint_signals: Blueprint dictionary or already-frozen representation.
 
         Returns:
             OrderedDict or None: The cached weights if found, otherwise None.
@@ -80,9 +92,9 @@ class SynapticLedger:
         if self.capacity == 0:
             return None
             
-        key = self._create_key(task_id_scalar, device_context_tuple, semantic_context_tuple, blueprint_tuple)
+        key = self._create_key(task_id_scalar, device_context, semantic_context, blueprint_signals)
         if key not in self.cache:
             return None
         
         self.cache.move_to_end(key)
-        return self.cache[key] # Returns the head_weights_dict
+        return OrderedDict((k, v.clone()) for k, v in self.cache[key].items())

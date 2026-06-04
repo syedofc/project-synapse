@@ -105,6 +105,7 @@ class Trainer:
         total_loss_agg = 0.0
         total_correct_agg = 0
         total_samples_agg = 0
+        processed_steps = 0
         
         active_task_names = [name for name in self.tasks_config.keys() if name in self.train_loaders]
         if not active_task_names:
@@ -166,6 +167,7 @@ class Trainer:
             self.optimizer.step()
             
             total_loss_agg += loss.item()
+            processed_steps += 1
             
             if self.tasks_config[task_name].get('metrics', ['accuracy'])[0] == 'accuracy':
                  acc_batch = metrics_utils.calculate_accuracy(outputs, labels_on_device)
@@ -178,7 +180,7 @@ class Trainer:
             current_primary_metric = (total_correct_agg / total_samples_agg) if total_samples_agg > 0 else 0.0
             self.dashboard.update(epoch, step_idx + 1, total_steps_for_epoch, loss.item(), current_primary_metric)
             
-        avg_loss = total_loss_agg / total_steps_for_epoch if total_steps_for_epoch > 0 else 0.0
+        avg_loss = total_loss_agg / processed_steps if processed_steps > 0 else 0.0
         avg_primary_metric = (total_correct_agg / total_samples_agg) if total_samples_agg > 0 else 0.0
         
         return avg_loss, {'accuracy': avg_primary_metric}
@@ -203,6 +205,7 @@ class Trainer:
                 task_total_loss_for_log = 0.0
                 task_total_correct_for_log = 0
                 task_total_samples_for_log = 0
+                task_batches_evaluated = 0
                 
                 for batch_data in loader: 
                     if isinstance(batch_data, (list, tuple)) and len(batch_data) == 2:
@@ -236,6 +239,7 @@ class Trainer:
                     task_total_loss_for_log += loss.item()
                     total_loss_agg += loss.item() 
                     total_batches_evaluated +=1
+                    task_batches_evaluated += 1
                     
                     if self.tasks_config[task_name].get('metrics', ['accuracy'])[0] == 'accuracy':
                         acc_batch = metrics_utils.calculate_accuracy(outputs, labels_on_device)
@@ -245,7 +249,7 @@ class Trainer:
                     task_total_samples_for_log += labels_on_device.size(0)
                     total_samples_agg += labels_on_device.size(0)
                 
-                avg_task_loss = task_total_loss_for_log / len(loader) if len(loader) > 0 else 0.0
+                avg_task_loss = task_total_loss_for_log / task_batches_evaluated if task_batches_evaluated > 0 else 0.0
                 avg_task_primary_metric = (task_total_correct_for_log / task_total_samples_for_log) if task_total_samples_for_log > 0 else 0.0
                 
                 metrics_by_task[task_name] = {'loss': avg_task_loss}

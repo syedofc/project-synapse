@@ -1,4 +1,4 @@
-project_name: "Synapse_Public_Toy_v0_1_0_alpha"
+project_name: "Synapse_Public_Toy"
 seed: 42
 checkpoint_dir: "checkpoints/public_toy"
 
@@ -47,6 +47,8 @@ tasks:
     id: 0
     data_loader_func: "get_toy_feature_loaders"
     input_processor_names: ["Toy_Feature_Identity"]
+    input_key_map:
+      Toy_Feature_Identity: "features"
     head_name: "Toy_Classifier_Head"
     loss_function: "CrossEntropyLoss"
     metrics: ["accuracy"]

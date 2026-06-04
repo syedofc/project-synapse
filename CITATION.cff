@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use Project Synapse in research, please cite this software."
 title: "Project Synapse"
-version: "0.2.2"
+version: "0.2.3"
 date-released: 2026-06-04
 license: "MIT"
 repository-code: "https://github.com/syedofc/project-synapse"
