@@ -1,6 +1,6 @@
 # Publication Checklist
 
-Current target release: `v0.2.3`
+Current target release: `v0.3.0`
 
 ## Repository Readiness
 

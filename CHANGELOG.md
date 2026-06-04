@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on semantic versioning with project-stage labels for research releases.
 
+## [0.3.0] - 2026-06-04
+
+### Added
+
+1. `scripts/benchmark_public_digits.py` for a controlled Synapse vs fixed-head comparison on the public digits task.
+2. `RELEASE_NOTES_v0.3.0.md`, `RESULTS_v0.3.0.md`, and `GITHUB_RELEASE_DRAFT_v0.3.0.md`.
+
+### Changed
+
+1. Added the first reproducible comparative benchmark result to the public artifact.
+2. Updated the repository framing from runtime-correctness-only to evidence-backed release candidate status.
+3. Documented comparative metrics for accuracy, CPU latency, trainable parameters, marginal task parameters, and break-even task scaling.
+
+### Known Issues
+
+1. Semantic context is still placeholder logic.
+2. Legacy multimodal configs remain experimental.
+3. The repository still lacks adapter and LoRA baselines.
+
 ## [0.2.3] - 2026-06-04
 
 ### Added

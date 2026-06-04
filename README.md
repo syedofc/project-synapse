@@ -1,8 +1,8 @@
 # Project Synapse
 
-Version: `v0.2.3`
+Version: `v0.3.0`
 Release Date: `2026-06-04`
-Status: `Public research release candidate`
+Status: `Evidence-backed research release candidate`
 
 Project Synapse is a research codebase for studying **resource-conditioned hypernetworks for modular task adaptation**. The core idea is to use a compact hypernetwork to generate lightweight task-specific parameters on demand, conditioned on task identity and runtime device context, while a cache-like memory module reuses previously successful parameter configurations.
 
@@ -54,7 +54,7 @@ The code currently explores that question through three architectural components
 
 ## Release Scope
 
-`v0.2.3` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
+`v0.3.0` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
 
 1. Advisor review
 2. Early open-source release
@@ -62,6 +62,23 @@ The code currently explores that question through three architectural components
 4. Incremental benchmarking work
 
 It is not yet a complete benchmark suite, but it now includes verified public experiment paths.
+
+## Current Benchmark Evidence
+
+The first controlled public benchmark in this repository compares Synapse against a fixed-head baseline on the public digits task under the same `8`-epoch training budget.
+
+Headline result from the seeded end-to-end run:
+
+1. Synapse resource-aware model: `98.61%` validation accuracy
+2. Fixed-head baseline: `95.56%` validation accuracy
+3. Synapse latency remains much higher on CPU: `1.39 ms/batch` vs `0.02 ms/batch`
+4. Synapse marginal task-specific parameters remain much smaller: `8` vs `2410`
+
+Interpretation:
+
+1. Synapse is no longer only a conceptual artifact; it now has one reproducible comparative result.
+2. The system still carries a large shared overhead on small single-task problems.
+3. Its most defensible efficiency advantage remains **marginal task growth**, not single-task simplicity.
 
 ## What A Viewer Should Take Away
 
@@ -93,6 +110,7 @@ The current codebase includes:
 10. A resource-aware public demo in [configs/public_digits_resource_exp.yaml](configs/public_digits_resource_exp.yaml)
 11. A working adaptation analysis tool in [scripts/test_adaptation.py](scripts/test_adaptation.py)
 12. A working feature extraction utility in [scripts/extract_imagenet_features.py](scripts/extract_imagenet_features.py)
+13. A public fixed-head vs Synapse benchmark script in [scripts/benchmark_public_digits.py](scripts/benchmark_public_digits.py)
 
 ## Current Limitations
 
@@ -178,6 +196,14 @@ This script compares generated task-head weights and predictions under two conte
 2. prediction agreement,
 3. drift in generated head weights.
 
+### Benchmark
+
+```bash
+python scripts/benchmark_public_digits.py --config configs/public_digits_resource_exp.yaml
+```
+
+This benchmark trains a fixed-head baseline and compares it against Synapse on the public digits path using the same epoch budget.
+
 ### Feature Extraction
 
 ```bash
@@ -195,6 +221,7 @@ python -m unittest discover -s tests -v
 python scripts/train.py --config configs/public_toy_exp.yaml
 python scripts/train.py --config configs/public_digits_exp.yaml
 python scripts/eval.py --config configs/public_digits_exp.yaml --checkpoint <checkpoint_path>
+python scripts/benchmark_public_digits.py --config configs/public_digits_resource_exp.yaml
 ```
 
 ### What You Can Use Today
@@ -204,7 +231,8 @@ Today, this repository can already be used to:
 1. train and evaluate a reproducible public classification experiment,
 2. run a resource-aware demo that changes generated head weights across contexts,
 3. inspect whether context changes alter generated parameters without destroying predictions,
-4. extract backbone features from an ImageFolder-style dataset for further experiments.
+4. run a fixed-head versus Synapse benchmark on the public digits task,
+5. extract backbone features from an ImageFolder-style dataset for further experiments.
 
 ### What You Should Not Assume Yet
 
@@ -224,19 +252,20 @@ This release includes:
 
 1. Research positioning: [04_RESEARCH_POSITIONING_v1.0.md](04_RESEARCH_POSITIONING_v1.0.md)
 2. Changelog: [CHANGELOG.md](CHANGELOG.md)
-3. Release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
-4. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
-5. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
-6. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
-7. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
-8. Verified public results: [RESULTS_v0.2.3.md](RESULTS_v0.2.3.md)
-9. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-10. Authors: [AUTHORS.md](AUTHORS.md)
-11. Citation metadata: [CITATION.cff](CITATION.cff)
-12. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
-13. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-14. Security policy: [SECURITY.md](SECURITY.md)
-15. Version marker: [VERSION](VERSION)
+3. Release notes: [RELEASE_NOTES_v0.3.0.md](RELEASE_NOTES_v0.3.0.md)
+4. Previous release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
+5. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
+6. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
+7. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
+8. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
+9. Verified public results: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
+10. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+11. Authors: [AUTHORS.md](AUTHORS.md)
+12. Citation metadata: [CITATION.cff](CITATION.cff)
+13. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
+14. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+15. Security policy: [SECURITY.md](SECURITY.md)
+16. Version marker: [VERSION](VERSION)
 
 ## Recommended Interpretation
 
@@ -244,7 +273,7 @@ The strongest way to read this repository is:
 
 1. As a **research prototype** for resource-aware parameter generation
 2. As a **platform for benchmarking hypernetwork-based task adaptation**
-3. As an **early public release candidate** that still needs baseline work, richer systems evaluation, and real telemetry support
+3. As an **evidence-backed public release candidate** that still needs broader baseline work, richer systems evaluation, and real telemetry support
 
 ## Near-Term Roadmap
 
@@ -255,9 +284,9 @@ The current roadmap is:
 2. `v0.2.0`
    Reproducible single-task public artifact
 3. `v0.3.0`
-   Real resource-aware conditioning
+   First comparative fixed-head benchmark on the public digits path
 4. `v0.4.0`
-   Baseline suite including fixed heads, adapters, and LoRA
+   Broader baseline suite including adapters and LoRA
 5. `v0.5.0`
    Multitask edge benchmark study
 6. `v1.0.0`

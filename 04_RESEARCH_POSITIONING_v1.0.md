@@ -137,19 +137,19 @@ Required deliverables:
 3. Fixed documentation and config naming.
 4. Reproduced result table for at least one dataset.
 
-### `v0.3.0` - Resource-Aware Experimental Artifact
+### `v0.3.0` - First Comparative Benchmark Artifact
 
 Goal:
 
-1. Real device telemetry.
-2. Resource-conditioned generation.
-3. Measured switching and memory metrics.
+1. Keep real resource-aware conditioning.
+2. Add the first reproducible comparative benchmark.
+3. Establish an honest evidence base for follow-up baseline work.
 
 Required deliverables:
 
-1. Replace random context with actual CPU, memory, thermal, battery, or power proxies.
-2. Context ablation: resource-aware vs context-agnostic.
-3. Warm-cache vs cold-cache comparison.
+1. Fixed-head baseline on a public dataset.
+2. Comparative table for accuracy, latency, and parameter counts.
+3. Documented interpretation of where Synapse helps and where it does not.
 
 ### `v0.4.0` - Baseline Suite
 
@@ -321,8 +321,8 @@ Use semantic versioning with explicit stage labels:
 
 1. `v0.1.0-alpha` - current prototype
 2. `v0.2.0` - reproducible single-task artifact
-3. `v0.3.0` - real resource-aware conditioning
-4. `v0.4.0` - baseline suite complete
+3. `v0.3.0` - first comparative fixed-head benchmark
+4. `v0.4.0` - broader baseline suite complete
 5. `v0.5.0` - multitask edge benchmark
 6. `v1.0.0` - research release
 
@@ -337,4 +337,3 @@ This gives the project a professional progression and makes advisor or reviewer 
 5. TinyTrain (ICML 2024): https://proceedings.mlr.press/v235/kwon24c.html
 6. Prototype-Augmented Hypernetworks for Continual Learning (2025): https://arxiv.org/abs/2505.07450
 7. Mixtral 8x7B (2024): https://arxiv.org/abs/2401.04088
-
