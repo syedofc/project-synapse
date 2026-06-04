@@ -1,12 +1,19 @@
 # Project Synapse
 
-Version: `v0.3.1`
+Version: `v0.3.2`
 Release Date: `2026-06-04`
 Status: `Polished evidence-backed research release candidate`
 
 Project Synapse is a research codebase for studying **resource-conditioned hypernetworks for modular task adaptation**. The core idea is to use a compact hypernetwork to generate lightweight task-specific parameters on demand, conditioned on task identity and runtime device context, while a cache-like memory module reuses previously successful parameter configurations.
 
 This repository is being released as a **public research artifact** with a verified quick-start path. It is still research software, not a production-ready framework.
+
+## Quick Links
+
+1. Latest public release: `v0.3.2`
+2. Public benchmark note: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
+3. Seeded benchmark artifact: [benchmarks/public_digits_fixed_head_vs_synapse_seed42.json](benchmarks/public_digits_fixed_head_vs_synapse_seed42.json)
+4. Citation metadata: [CITATION.cff](CITATION.cff)
 
 ## Essence
 
@@ -54,7 +61,7 @@ The code currently explores that question through three architectural components
 
 ## Release Scope
 
-`v0.3.1` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
+`v0.3.2` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
 
 1. Advisor review
 2. Early open-source release
@@ -264,22 +271,23 @@ This release includes:
 
 1. Research positioning: [04_RESEARCH_POSITIONING_v1.0.md](04_RESEARCH_POSITIONING_v1.0.md)
 2. Changelog: [CHANGELOG.md](CHANGELOG.md)
-3. Release notes: [RELEASE_NOTES_v0.3.1.md](RELEASE_NOTES_v0.3.1.md)
-4. Previous release notes: [RELEASE_NOTES_v0.3.0.md](RELEASE_NOTES_v0.3.0.md)
-5. Previous release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
-6. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
-7. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
-8. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
-9. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
-10. Verified public results: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
-11. Curated benchmark artifacts: [benchmarks/README.md](benchmarks/README.md)
-12. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-13. Authors: [AUTHORS.md](AUTHORS.md)
-14. Citation metadata: [CITATION.cff](CITATION.cff)
-15. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
-16. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-17. Security policy: [SECURITY.md](SECURITY.md)
-18. Version marker: [VERSION](VERSION)
+3. Release notes: [RELEASE_NOTES_v0.3.2.md](RELEASE_NOTES_v0.3.2.md)
+4. Previous release notes: [RELEASE_NOTES_v0.3.1.md](RELEASE_NOTES_v0.3.1.md)
+5. Previous release notes: [RELEASE_NOTES_v0.3.0.md](RELEASE_NOTES_v0.3.0.md)
+6. Previous release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
+7. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
+8. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
+9. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
+10. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
+11. Verified public results: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
+12. Curated benchmark artifacts: [benchmarks/README.md](benchmarks/README.md)
+13. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+14. Authors: [AUTHORS.md](AUTHORS.md)
+15. Citation metadata: [CITATION.cff](CITATION.cff)
+16. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
+17. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+18. Security policy: [SECURITY.md](SECURITY.md)
+19. Version marker: [VERSION](VERSION)
 
 ## Recommended Interpretation
 

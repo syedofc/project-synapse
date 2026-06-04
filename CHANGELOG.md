@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on semantic versioning with project-stage labels for research releases.
 
+## [0.3.2] - 2026-06-04
+
+### Added
+
+1. `RELEASE_NOTES_v0.3.2.md` and `GITHUB_RELEASE_DRAFT_v0.3.2.md`.
+
+### Changed
+
+1. Added a quick-links section near the top of the README.
+2. Set the GitHub repository homepage to the latest release page while Zenodo DOI publication is still pending.
+3. Updated the Zenodo setup guide to reflect the current release line.
+
+### Known Issues
+
+1. Semantic context is still placeholder logic.
+2. Legacy multimodal configs remain experimental.
+3. The repository still lacks adapter and LoRA baselines.
+
 ## [0.3.1] - 2026-06-04
 
 ### Added
