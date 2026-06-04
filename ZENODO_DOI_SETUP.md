@@ -1,11 +1,13 @@
 # Zenodo DOI Setup
 
-This repository is ready for Zenodo archiving through the GitHub integration.
+This repository is now connected to Zenodo and has a published archive record.
 
 Current repository:
 
 - GitHub: `https://github.com/syedofc/project-synapse`
 - Current tagged release: `v0.3.2`
+- Zenodo concept DOI: `10.5281/zenodo.20544669`
+- Zenodo version DOI for `v0.3.2`: `10.5281/zenodo.20544670`
 
 ## Current Metadata Status
 
@@ -17,53 +19,42 @@ That is intentional. According to Zenodo's current documentation, Zenodo will us
 
 For this repository, `CITATION.cff` is sufficient and keeps the metadata simpler to maintain across GitHub and Zenodo.
 
-## Exact Next Steps
+## Current State
 
-### 1. Connect Zenodo to GitHub
+The main Zenodo setup work is complete for `v0.3.2`.
 
-In Zenodo:
+Recommended repository-facing use:
 
-1. Open your profile menu and go to `GitHub`
-2. Click `Sync now`
-3. Find `syedofc/project-synapse`
-4. Toggle the repository on
+1. use the **concept DOI** in the README badge and repository homepage,
+2. use the **version DOI** when citing the exact `v0.3.2` release,
+3. keep `CITATION.cff` aligned with the latest archived release.
 
-### 2. Trigger Archival
+## Future-Version Workflow
 
-After the repository is enabled in Zenodo:
+### 1. Publish A New GitHub Release
 
-1. Go back to the Zenodo `GitHub` page
-2. Select `project-synapse`
-3. Use Zenodo's release workflow to archive a GitHub release
+For any future tagged release:
 
-### 3. If `v0.3.2` Does Not Appear
+1. create the new GitHub tag and release,
+2. wait for Zenodo to ingest the release,
+3. verify that a new version DOI appears under the same concept DOI,
+4. update `CITATION.cff` and the README badge if needed.
 
-Zenodo's documentation says that once connected, **new releases** are automatically ingested and archived.
+### 2. If The New Release Does Not Appear
 
-Inference:
+If a new tagged release does not appear in Zenodo after sync:
 
-If Zenodo does not pick up the already-published `v0.3.2` release after enabling the repository, create a fresh GitHub release after the integration is active.
-
-Recommended options:
-
-1. wait for the next meaningful code or benchmark release, or
-2. create a small archival patch release such as `v0.3.2` if you want the DOI immediately.
-
-### 4. After the DOI Is Minted
-
-Update the repository with:
-
-1. a Zenodo DOI badge in `README.md`,
-2. the DOI URL in the GitHub repository website field,
-3. the DOI in `CITATION.cff` if you want the citation metadata to point directly to the archived software record.
+1. use Zenodo's GitHub integration page and `Sync now`,
+2. confirm the repository is still enabled,
+3. check whether the GitHub release was published after the integration remained active.
 
 ## Recommended Post-Mint Repository Edits
 
-Once you have a DOI, the best public-facing polish is:
+Once a DOI is minted, the best public-facing polish is:
 
 1. add a badge near the top of `README.md`,
 2. add a short `Cite this software` snippet with the DOI URL,
-3. optionally set the GitHub repository homepage to the Zenodo concept DOI landing page.
+3. set the GitHub repository homepage to the Zenodo concept DOI landing page.
 
 ## Official References
 

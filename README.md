@@ -1,5 +1,7 @@
 # Project Synapse
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20544669.svg)](https://doi.org/10.5281/zenodo.20544669)
+
 Version: `v0.3.2`
 Release Date: `2026-06-04`
 Status: `Polished evidence-backed research release candidate`
@@ -11,9 +13,11 @@ This repository is being released as a **public research artifact** with a verif
 ## Quick Links
 
 1. Latest public release: `v0.3.2`
-2. Public benchmark note: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
-3. Seeded benchmark artifact: [benchmarks/public_digits_fixed_head_vs_synapse_seed42.json](benchmarks/public_digits_fixed_head_vs_synapse_seed42.json)
-4. Citation metadata: [CITATION.cff](CITATION.cff)
+2. Zenodo concept DOI: `10.5281/zenodo.20544669`
+3. Zenodo version DOI for `v0.3.2`: `10.5281/zenodo.20544670`
+4. Public benchmark note: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
+5. Seeded benchmark artifact: [benchmarks/public_digits_fixed_head_vs_synapse_seed42.json](benchmarks/public_digits_fixed_head_vs_synapse_seed42.json)
+6. Citation metadata: [CITATION.cff](CITATION.cff)
 
 ## Essence
 
@@ -322,6 +326,11 @@ The project is distributed under the MIT license in [01_LICENSE](01_LICENSE).
 
 The current public release is maintained by Syed Amir Hamza. Authorship details are listed in [AUTHORS.md](AUTHORS.md), and software citation metadata is provided in [CITATION.cff](CITATION.cff).
 
+Preferred DOI usage:
+
+1. cite `10.5281/zenodo.20544670` when you want the exact `v0.3.2` release,
+2. cite `10.5281/zenodo.20544669` when you want the evolving project across versions.
+
 ## Zenodo And DOI
 
-This repository is ready for Zenodo-based software archiving through the GitHub integration. The exact setup steps are documented in [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md).
+This repository now has a Zenodo record. The current concept DOI is `10.5281/zenodo.20544669`, and the current version DOI for `v0.3.2` is `10.5281/zenodo.20544670`. The archival workflow and future-version notes are documented in [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md).

@@ -3,9 +3,10 @@ message: "If you use Project Synapse in research, please cite this software."
 title: "Project Synapse"
 version: "0.3.2"
 date-released: 2026-06-04
+doi: "10.5281/zenodo.20544670"
 license: "MIT"
 repository-code: "https://github.com/syedofc/project-synapse"
-url: "https://github.com/syedofc/project-synapse"
+url: "https://doi.org/10.5281/zenodo.20544669"
 authors:
   - family-names: "Hamza"
     given-names: "Syed Amir"
