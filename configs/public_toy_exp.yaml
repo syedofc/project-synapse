@@ -1,0 +1,61 @@
+project_name: "Synapse_Public_Toy_v0_1_0_alpha"
+seed: 42
+checkpoint_dir: "checkpoints/public_toy"
+
+data:
+  num_workers: 0
+
+training:
+  device: "cpu"
+  epochs: 5
+  batch_size: 32
+  optimizer: "AdamW"
+  learning_rate: 0.01
+  weight_decay: 0.0
+
+model:
+  input_processors_lib:
+    - name: "Toy_Feature_Identity"
+      type: "IdentityProcessor"
+      output_features_dim: 16
+
+  task_heads_lib:
+    - name: "Toy_Classifier_Head"
+      type: "ClassificationHead"
+      input_features_dim: 16
+      num_classes: 4
+      num_hidden_layers_in_head: 1
+      head_hidden_dim: 16
+
+  semantic_context_extractor:
+    enabled: false
+
+  weaver:
+    task_embedding_dim: 8
+    device_context_dim: 0
+    hidden_dim: 64
+    num_hidden_layers: 2
+
+  substrate:
+    fusion_type: "none"
+
+  ledger:
+    capacity: 0
+
+tasks:
+  toy_classification:
+    id: 0
+    data_loader_func: "get_toy_feature_loaders"
+    input_processor_names: ["Toy_Feature_Identity"]
+    head_name: "Toy_Classifier_Head"
+    loss_function: "CrossEntropyLoss"
+    metrics: ["accuracy"]
+    dataset_specific_params:
+      loader_kwargs:
+        feature_dim: 16
+        num_classes: 4
+        train_samples: 256
+        val_samples: 64
+        class_sep: 3.0
+        noise_std: 0.6
+        seed: 42

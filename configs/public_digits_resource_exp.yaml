@@ -1,0 +1,61 @@
+project_name: "Synapse_Public_Digits_Resource_v0_2_1"
+seed: 42
+checkpoint_dir: "checkpoints/public_digits_resource"
+
+data:
+  num_workers: 0
+
+training:
+  device: "cpu"
+  epochs: 8
+  batch_size: 64
+  optimizer: "AdamW"
+  learning_rate: 0.01
+  weight_decay: 0.0
+
+model:
+  input_processors_lib:
+    - name: "Digits_Feature_Identity"
+      type: "IdentityProcessor"
+      output_features_dim: 64
+
+  task_heads_lib:
+    - name: "Digits_Classifier_Head"
+      type: "ClassificationHead"
+      input_features_dim: 64
+      num_classes: 10
+      num_hidden_layers_in_head: 1
+      head_hidden_dim: 32
+
+  semantic_context_extractor:
+    enabled: false
+
+  resource_monitor:
+    mode: "telemetry"
+    fallback_mode: "zeros"
+
+  weaver:
+    task_embedding_dim: 8
+    device_context_dim: 4
+    hidden_dim: 96
+    num_hidden_layers: 2
+
+  substrate:
+    fusion_type: "none"
+
+  ledger:
+    capacity: 0
+
+tasks:
+  digits_classification:
+    id: 0
+    data_loader_func: "get_digits_loaders"
+    input_processor_names: ["Digits_Feature_Identity"]
+    head_name: "Digits_Classifier_Head"
+    loss_function: "CrossEntropyLoss"
+    metrics: ["accuracy"]
+    dataset_specific_params:
+      loader_kwargs:
+        test_size: 0.2
+        random_state: 42
+        normalize: true

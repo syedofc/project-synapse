@@ -1,0 +1,41 @@
+# Default Configuration Template for Project Synapse
+# This file defines all possible parameters and their default values.
+# Specific experiment configs can override these values.
+
+project_name: "Project_Synapse_Default"
+seed: 42
+
+# --- Data Parameters ---
+data:
+  cifar100_path: "./datasets/cifar100"
+  20news_path: "./datasets/20news"
+  num_workers: 4 # Number of parallel workers for data loading
+
+# --- Training Parameters ---
+training:
+  device: "cuda" # "cuda" or "cpu"
+  epochs: 50
+  batch_size: 64
+  optimizer: "AdamW"
+  learning_rate: 0.001
+  weight_decay: 0.01
+
+# --- Model Parameters ---
+model:
+  # The Task Weaver (Hypernetwork) generates weights for the Substrate.
+  weaver:
+    task_embedding_dim: 16      # A small vector to represent the task ID (e.g., 0 for CIFAR, 1 for 20News)
+    context_embedding_dim: 16   # A vector for device context (e.g., battery, CPU)
+    hidden_dim: 256             # Hidden layer size within the Weaver
+    num_hidden_layers: 3
+
+  # The Neural Substrate is the main network that performs the task.
+  substrate:
+    # For a simple MLP substrate
+    input_dim: 784 # Example: will be overwritten by data loader (e.g., 32*32*3 for CIFAR)
+    hidden_dims: [512, 256]
+    output_dim: 100 # Example: will be overwritten by data loader (e.g., 100 for CIFAR-100)
+
+  # The Synaptic Ledger stores successful weights.
+  ledger:
+    capacity: 1024 # How many successful weight configurations to cache

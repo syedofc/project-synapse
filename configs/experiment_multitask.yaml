@@ -1,0 +1,133 @@
+project_name: "Synapse_MultiTask_ImageNet_A2D2_COCO_v1.3" # Version increment
+seed: 42
+
+# --- Global Data Parameters ---
+data:
+  imagenet_path: "/home/icps/Downloads/imagenet-object-localization-challenge/ILSVRC/Data/CLS-LOC"
+  a2d2_root_path: "/home/icps/Downloads/Data/a2d2_camera_lidar_semantic_bboxes/camera_lidar_semantic"
+  
+  # COCO paths: 'coco_images_root' should contain train2017/, val2017/ subfolders
+  # 'coco_annotations_root' should contain instances_train2017.json, instances_val2017.json
+  coco_images_root_path: "/path/to/your/coco/images" # E.g., /datasets/COCO/images
+  coco_annotations_path: "/path/to/your/coco/annotations" # E.g., /datasets/COCO/annotations
+
+  num_workers: 8
+  img_size_imagenet: 224
+  img_size_a2d2_camera_seg: [384, 608]
+  img_size_coco: [480, 640] # Example H, W for COCO, can be int for square too
+
+# --- Training Parameters ---
+training:
+  device: "cuda"
+  epochs: 100 
+  batch_size: 8 # Further reduced for detection tasks, adjust based on VRAM
+  optimizer: "AdamW"
+  learning_rate: 0.0001
+  weight_decay: 0.01
+
+# --- Model Architecture & Components Configuration ---
+model:
+  input_processors_lib:
+    - name: "ImageNet_ResNet50_FeatExtractor"
+      type: "ImageProcessor" 
+      backbone_name: "resnet50"
+      pretrained: true
+      freeze_backbone: true
+      output_flattened_features: true 
+
+    - name: "A2D2_Camera_MobileNetV2_FeatExtractor_Seg"
+      type: "ImageProcessor" 
+      backbone_name: "mobilenet_v2" 
+      pretrained: true
+      freeze_backbone: true 
+      output_flattened_features: false 
+
+    - name: "COCO_ObjectDetection_Backbone" # Can reuse ResNet50 or use another like RetinaNet's
+      type: "ImageProcessor"
+      backbone_name: "resnet50" # Example, RetinaNet often uses ResNet FPN
+      pretrained: true
+      freeze_backbone: true # Usually fine-tune later stages of backbone for detection
+      output_flattened_features: false # Detection heads need feature maps (often from multiple levels - FPN)
+
+  task_heads_lib:
+    - name: "ImageNet_Classifier_Head_for_ResNet50"
+      type: "ClassificationHead"
+      input_features_dim: 2048 
+      num_classes: 1000        
+      num_hidden_layers_in_head: 0 
+
+    - name: "A2D2_Segmentation_FCNHead"
+      type: "SegmentationHead"
+      input_feature_channels: 1280 
+      num_classes: 13 # YOU MUST SET THIS ACCURATELY FOR YOUR A2D2 DATA
+      intermediate_channels: 256  
+      upsample_factor: 32         
+
+    - name: "COCO_Basic_Detection_Head" # Placeholder for a detection head
+      type: "DetectionHead" # You will need to create this class in task_heads.py
+      input_feature_channels: 2048 # Example, if using ResNet50 C5 features
+      num_classes: 80 # COCO object classes (excluding background)
+      num_anchors_per_location: 9 # Example, depends on anchor strategy
+      # Other params for detection head, e.g., regression components
+
+  semantic_context_extractor:
+    enabled: false 
+
+  weaver:
+    # num_unique_tasks will be calculated
+    task_embedding_dim: 64
+    device_context_dim: 32 
+    semantic_context_dim: 0 
+    hidden_dim: 1024
+    num_hidden_layers: 5
+
+  substrate:
+    fusion_type: "none" 
+
+  ledger:
+    capacity: 2048
+
+# --- Task Definitions ---
+tasks:
+  imagenet_classification:
+    id: 0 
+    data_loader_func: "get_imagenet_loaders"
+    input_processor_names: ["ImageNet_ResNet50_FeatExtractor"] 
+    head_name: "ImageNet_Classifier_Head_for_ResNet50" 
+    loss_function: "CrossEntropyLoss"
+    metrics: ["accuracy"]
+    dataset_specific_params:
+      data_path_key: "imagenet_path" 
+      img_size_key: "img_size_imagenet"
+      num_classes: 1000 
+
+  a2d2_camera_semantic_segmentation:
+    id: 1
+    data_loader_func: "get_a2d2_loaders"
+    input_processor_names: ["A2D2_Camera_MobileNetV2_FeatExtractor_Seg"] 
+    head_name: "A2D2_Segmentation_FCNHead"
+    loss_function: "CrossEntropyLoss" # Or DiceLoss
+    metrics: ["mIoU"] 
+    dataset_specific_params:
+      data_path_key: "a2d2_root_path" 
+      camera_view: "cam_front_center" 
+      img_size_a2d2_camera_key: "img_size_a2d2_camera_seg" 
+      num_classes: 13 # SET ACCURATELY
+      color_map_json_path: "configs/a2d2_color_map.json" 
+      task_type: "camera_semantic_segmentation"
+
+  coco_object_detection:
+    id: 2
+    data_loader_func: "get_coco_loaders"
+    input_processor_names: ["COCO_ObjectDetection_Backbone"]
+    head_name: "COCO_Basic_Detection_Head"
+    loss_function: "DetectionLoss" # You will need to implement this custom loss
+    metrics: ["mAP"] # Mean Average Precision
+    dataset_specific_params:
+      data_path_key: "coco_images_root_path" # Path to COCO images (train2017, val2017 folders)
+      # Keys for annotation file names, relative to coco_annotations_path
+      ann_file_train_name: "instances_train2017.json"
+      ann_file_val_name: "instances_val2017.json"
+      # The get_coco_loaders will use these names with config['data']['coco_annotations_path']
+      img_size_key: "img_size_coco"
+      num_classes: 80 # Standard 80 COCO object classes

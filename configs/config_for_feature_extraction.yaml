@@ -1,0 +1,28 @@
+project_name: "Synapse_ImageNet_Feature_Extraction"
+seed: 42
+
+data:
+  imagenet_path: "/home/icps/Downloads/imagenet-object-localization-challenge/ILSVRC/Data/CLS-LOC"
+  num_workers: 2
+  img_size: 224
+
+training:
+  device: "cuda"
+  batch_size: 64
+
+model:
+  input_processors_lib:
+    - name: "ImageNet_ResNet50_FeatExtractor_ForExtraction"
+      type: "ImageProcessor"
+      backbone_name: "resnet50"
+      pretrained: true
+      freeze_backbone: true
+      output_flattened_features: true
+
+tasks:
+  imagenet_classification:
+    id: 0
+    input_processor_names: ["ImageNet_ResNet50_FeatExtractor_ForExtraction"]
+    dataset_specific_params:
+      data_path_key: "imagenet_path"
+      img_size_key: "img_size"

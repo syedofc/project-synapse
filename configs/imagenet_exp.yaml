@@ -1,0 +1,88 @@
+# Configuration for ImageNet Classification with SynapseOS
+# USING PRE-EXTRACTED FEATURES
+
+project_name: "Synapse_ImageNet_PreExtractedFeats_v1" # Updated project name
+seed: 42
+
+# --- Data Parameters ---
+data:
+  # Path to the directory where pre-extracted features are saved
+  # This directory will contain 'train' and 'val' subfolders with .pt files
+  imagenet_features_path: "data/imagenet_features" 
+  
+  num_workers: 0 # For loading .pt files, 0 or 1 is usually fine and RAM-safe
+  # img_size is no longer directly used by this feature loader in the same way
+
+# --- Training Parameters ---
+training:
+  device: "cuda"
+  epochs: 90 
+  batch_size: 64 # Can likely be much larger now with pre-extracted features
+                 # Start with 64 or 128 and monitor VRAM.
+  optimizer: "AdamW"
+  learning_rate: 0.0001 
+  weight_decay: 0.001   
+  # learning_rate_scheduler: "StepLR" 
+  # scheduler_step_size: 30
+  # scheduler_gamma: 0.1
+
+# --- Model Parameters ---
+model:
+  # backbone_name and use_pretrained_backbone are less relevant here for SynapseModel init
+  # as the features are already from a backbone. However, InputProcessor definitions
+  # still need them if other tasks were to use on-the-fly extraction.
+
+  substrate:
+    hidden_dims: [] 
+
+  weaver:
+    task_embedding_dim: 32
+    device_context_dim: 32 # Or 4 if using the real psutil monitor
+    semantic_context_dim: 0 
+    hidden_dim: 256 
+    num_hidden_layers: 3 
+    # max_head_parameters will be calculated by SynapseModel
+
+  ledger:
+    capacity: 1024
+  
+  # --- Component Libraries ---
+  input_processors_lib:
+    # This ResNet50 extractor is used by the feature_extraction_script,
+    # NOT directly by the ImageNet task in train.py anymore.
+    - name: "ImageNet_ResNet50_FeatExtractor_FOR_EXTRACTION_ONLY" 
+      type: "ImageProcessor"
+      backbone_name: "resnet50"
+      pretrained: true
+      freeze_backbone: true
+      output_flattened_features: true # Ensure it outputs vectors for saving
+
+    - name: "Identity_Feature_Processor" # New: For tasks using pre-extracted features
+      type: "IdentityProcessor" # We will create this simple class
+      # It needs to declare its output_features_dim to match what was saved
+      output_features_dim: 2048 # Assuming ResNet50 features were saved
+
+  task_heads_lib:
+    - name: "ImageNet_Classifier_Bottleneck_Head" 
+      type: "ClassificationHead"
+      input_features_dim: 2048      # Must match features from Identity_Feature_Processor
+      num_classes: 1000             
+      num_hidden_layers_in_head: 1  
+      head_hidden_dim: 256          
+
+  semantic_context_extractor:
+    enabled: false
+
+# --- Task Definitions ---
+tasks:
+  imagenet_classification_from_features: # Task name updated for clarity
+    id: 0
+    data_loader_func: "get_imagenet_feature_loaders" # <<< CHANGED
+    input_processor_names: ["Identity_Feature_Processor"] # <<< CHANGED: Uses identity processor now
+    head_name: "ImageNet_Classifier_Bottleneck_Head" 
+    loss_function: "CrossEntropyLoss"
+    metrics: ["accuracy"]
+    dataset_specific_params:
+      data_path_key: "imagenet_features_path"  # <<< CHANGED: Points to features
+      # img_size_key is no longer needed by this specific loader
+      num_classes: 1000
