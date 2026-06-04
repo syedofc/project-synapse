@@ -5,7 +5,7 @@ This repository is ready for Zenodo archiving through the GitHub integration.
 Current repository:
 
 - GitHub: `https://github.com/syedofc/project-synapse`
-- Current tagged release: `v0.3.0`
+- Current tagged release: `v0.3.1`
 
 ## Current Metadata Status
 
@@ -36,13 +36,13 @@ After the repository is enabled in Zenodo:
 2. Select `project-synapse`
 3. Use Zenodo's release workflow to archive a GitHub release
 
-### 3. If `v0.3.0` Does Not Appear
+### 3. If `v0.3.1` Does Not Appear
 
 Zenodo's documentation says that once connected, **new releases** are automatically ingested and archived.
 
 Inference:
 
-If Zenodo does not pick up the already-published `v0.3.0` release after enabling the repository, create a fresh GitHub release after the integration is active.
+If Zenodo does not pick up the already-published `v0.3.1` release after enabling the repository, create a fresh GitHub release after the integration is active.
 
 Recommended options:
 

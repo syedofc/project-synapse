@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on semantic versioning with project-stage labels for research releases.
 
+## [0.3.1] - 2026-06-04
+
+### Added
+
+1. `benchmarks/README.md` for curated public benchmark artifacts.
+2. `benchmarks/public_digits_fixed_head_vs_synapse_seed42.json` as a machine-readable seeded benchmark result.
+3. `RELEASE_NOTES_v0.3.1.md` and `GITHUB_RELEASE_DRAFT_v0.3.1.md`.
+
+### Changed
+
+1. Polished the README to make the benchmark evidence easier to find and reuse.
+2. Updated repository-facing copy to reflect the first comparative benchmark.
+3. Renamed the pinned issue draft to `GITHUB_PINNED_ISSUE_v0.3.0.md` and refreshed its wording.
+
+### Known Issues
+
+1. Semantic context is still placeholder logic.
+2. Legacy multimodal configs remain experimental.
+3. The repository still lacks adapter and LoRA baselines.
+
 ## [0.3.0] - 2026-06-04
 
 ### Added

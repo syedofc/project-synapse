@@ -53,3 +53,9 @@ It does show:
 1. Synapse can be competitive or better in accuracy on the public digits path under the tested budget.
 2. Synapse remains substantially slower and heavier in shared parameters on CPU.
 3. Synapse has a clear systems advantage only when you care about marginal task growth and context-conditioned parameter change.
+
+## Repository Artifact
+
+The exact seeded result used for this note is stored in:
+
+- [benchmarks/public_digits_fixed_head_vs_synapse_seed42.json](benchmarks/public_digits_fixed_head_vs_synapse_seed42.json)

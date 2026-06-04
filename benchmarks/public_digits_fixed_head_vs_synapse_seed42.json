@@ -1,0 +1,45 @@
+{
+  "benchmark_name": "public_digits_fixed_head_vs_synapse",
+  "date": "2026-06-04",
+  "config": "configs/public_digits_resource_exp.yaml",
+  "synapse": {
+    "val_loss": 0.06477572908625007,
+    "val_accuracy": 0.9861111111111112,
+    "eval_latency_ms_per_batch": 1.3911822300724452,
+    "total_parameters": 246748,
+    "trainable_parameters": 244338,
+    "marginal_task_parameters": 8,
+    "shared_trainable_parameters": 244330,
+    "state_dict_bytes": 986992,
+    "context_response": {
+      "context_dim": 4,
+      "weight_delta_l2": 1.5400641708543805,
+      "prediction_agreement": 1.0
+    }
+  },
+  "fixed_head": {
+    "val_loss": 0.11754329192141692,
+    "val_accuracy": 0.9555555555555556,
+    "eval_latency_ms_per_batch": 0.02267200001369929,
+    "total_parameters": 2410,
+    "trainable_parameters": 2410,
+    "marginal_task_parameters": 2410,
+    "shared_trainable_parameters": 0,
+    "state_dict_bytes": 9640,
+    "context_response": {
+      "context_dim": 0,
+      "weight_delta_l2": 0.0,
+      "prediction_agreement": 1.0,
+      "note": "Static baseline; no context-conditioned parameter change."
+    }
+  },
+  "comparison": {
+    "accuracy_delta_synapse_minus_fixed": 0.030555555555555558,
+    "latency_delta_ms_synapse_minus_fixed": 1.368510230058746,
+    "marginal_task_parameter_delta_synapse_minus_fixed": -2402,
+    "break_even_task_count_estimate": 102
+  },
+  "interpretation": {
+    "summary": "Fixed heads are the conservative single-task baseline. Synapse carries higher shared overhead but lower marginal task-specific growth."
+  }
+}

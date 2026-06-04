@@ -1,8 +1,8 @@
 # Project Synapse
 
-Version: `v0.3.0`
+Version: `v0.3.1`
 Release Date: `2026-06-04`
-Status: `Evidence-backed research release candidate`
+Status: `Polished evidence-backed research release candidate`
 
 Project Synapse is a research codebase for studying **resource-conditioned hypernetworks for modular task adaptation**. The core idea is to use a compact hypernetwork to generate lightweight task-specific parameters on demand, conditioned on task identity and runtime device context, while a cache-like memory module reuses previously successful parameter configurations.
 
@@ -54,7 +54,7 @@ The code currently explores that question through three architectural components
 
 ## Release Scope
 
-`v0.3.0` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
+`v0.3.1` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
 
 1. Advisor review
 2. Early open-source release
@@ -73,6 +73,11 @@ Headline result from the seeded end-to-end run:
 2. Fixed-head baseline: `95.56%` validation accuracy
 3. Synapse latency remains much higher on CPU: `1.39 ms/batch` vs `0.02 ms/batch`
 4. Synapse marginal task-specific parameters remain much smaller: `8` vs `2410`
+
+Curated artifact:
+
+1. benchmark summary note: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
+2. machine-readable result: [benchmarks/public_digits_fixed_head_vs_synapse_seed42.json](benchmarks/public_digits_fixed_head_vs_synapse_seed42.json)
 
 Interpretation:
 
@@ -139,9 +144,10 @@ The repository uses a numbered root layout for internal organization, but the ac
 4. `training/` trainer and dashboard
 5. `utils/` logging and metrics helpers
 6. `scripts/` training, evaluation, extraction, and adaptation entrypoints
-7. `tests/` prototype tests
-8. `notebooks/` analysis and debugging notebooks
-9. `training_logs/` archived run logs
+7. `benchmarks/` curated public benchmark artifacts
+8. `tests/` prototype tests
+9. `notebooks/` analysis and debugging notebooks
+10. `training_logs/` archived run logs
 
 ## Installation
 
@@ -204,6 +210,12 @@ python scripts/benchmark_public_digits.py --config configs/public_digits_resourc
 
 This benchmark trains a fixed-head baseline and compares it against Synapse on the public digits path using the same epoch budget.
 
+Curated seeded result artifact:
+
+```bash
+cat benchmarks/public_digits_fixed_head_vs_synapse_seed42.json
+```
+
 ### Feature Extraction
 
 ```bash
@@ -252,20 +264,22 @@ This release includes:
 
 1. Research positioning: [04_RESEARCH_POSITIONING_v1.0.md](04_RESEARCH_POSITIONING_v1.0.md)
 2. Changelog: [CHANGELOG.md](CHANGELOG.md)
-3. Release notes: [RELEASE_NOTES_v0.3.0.md](RELEASE_NOTES_v0.3.0.md)
-4. Previous release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
-5. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
-6. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
-7. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
-8. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
-9. Verified public results: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
-10. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-11. Authors: [AUTHORS.md](AUTHORS.md)
-12. Citation metadata: [CITATION.cff](CITATION.cff)
-13. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
-14. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-15. Security policy: [SECURITY.md](SECURITY.md)
-16. Version marker: [VERSION](VERSION)
+3. Release notes: [RELEASE_NOTES_v0.3.1.md](RELEASE_NOTES_v0.3.1.md)
+4. Previous release notes: [RELEASE_NOTES_v0.3.0.md](RELEASE_NOTES_v0.3.0.md)
+5. Previous release notes: [RELEASE_NOTES_v0.2.3.md](RELEASE_NOTES_v0.2.3.md)
+6. Previous release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
+7. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
+8. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
+9. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
+10. Verified public results: [RESULTS_v0.3.0.md](RESULTS_v0.3.0.md)
+11. Curated benchmark artifacts: [benchmarks/README.md](benchmarks/README.md)
+12. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+13. Authors: [AUTHORS.md](AUTHORS.md)
+14. Citation metadata: [CITATION.cff](CITATION.cff)
+15. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
+16. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+17. Security policy: [SECURITY.md](SECURITY.md)
+18. Version marker: [VERSION](VERSION)
 
 ## Recommended Interpretation
 

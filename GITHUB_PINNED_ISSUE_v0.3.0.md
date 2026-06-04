@@ -17,7 +17,8 @@ Many adaptation methods are static once configured. Synapse explores whether ada
 1. a reproducible public quick-start on a real dataset,
 2. a resource-aware demo path,
 3. an adaptation analysis script for comparing generated weights across contexts,
-4. a feature extraction utility for ImageFolder-style datasets.
+4. a fixed-head versus Synapse benchmark on the public digits task,
+5. a feature extraction utility for ImageFolder-style datasets.
 
 ## What This Repository Is Not Claiming
 
@@ -30,5 +31,5 @@ Many adaptation methods are static once configured. Synapse explores whether ada
 Treat Synapse as:
 
 1. a research artifact,
-2. a benchmark starting point,
-3. a useful base for extending into fixed-head, adapter, or LoRA comparisons.
+2. a benchmark starting point with one public comparative result,
+3. a useful base for extending into adapter or LoRA comparisons.

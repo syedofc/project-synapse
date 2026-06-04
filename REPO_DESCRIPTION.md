@@ -10,7 +10,7 @@ Project Synapse studies whether lightweight task parameters can be generated at 
 
 ## Short Viewer-Facing Summary
 
-Project Synapse is a public research prototype for **resource-conditioned hypernetwork adaptation**. It is meant for researchers and students exploring modular task switching, edge-aware parameter generation, and cache-like recall of useful parameter states.
+Project Synapse is a public research prototype for **resource-conditioned hypernetwork adaptation**. It is meant for researchers and students exploring modular task switching, edge-aware parameter generation, and cache-like recall of useful parameter states, and it now includes a first public fixed-head benchmark.
 
 Maintainer: Syed Amir Hamza, Hochschule Heilbronn.
 
@@ -34,7 +34,8 @@ What you can do here today:
 
 1. run a reproducible public experiment on a real dataset,
 2. inspect how generated head weights change across contexts,
-3. use the codebase as a starting point for benchmark comparisons against fixed heads, adapters, or LoRA.
+3. inspect a seeded fixed-head versus Synapse benchmark artifact,
+4. use the codebase as a starting point for benchmark comparisons against adapters or LoRA.
 
 What this repository is not claiming:
 
