@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on semantic versioning with project-stage labels for research releases.
 
+## [0.2.2] - 2026-06-04
+
+### Added
+
+1. `AUTHORS.md` with named authorship and affiliation details.
+2. `RELEASE_NOTES_v0.2.2.md` for metadata and citation polish tracking.
+
+### Changed
+
+1. Replaced generic contributor metadata in `CITATION.cff` with named author information.
+2. Added repository URLs to `CITATION.cff`.
+3. Replaced the generic MIT license owner with a named copyright holder.
+4. Cleaned formatting in the license file.
+5. Updated `README.md` and `VERSION` to reflect `v0.2.2`.
+
+### Known Issues
+
+1. Semantic context is still placeholder logic.
+2. Legacy multimodal configs remain experimental.
+3. The project still lacks a formal baseline suite against adapters and LoRA.
+
 ## [0.2.1] - 2026-06-04
 
 ### Added

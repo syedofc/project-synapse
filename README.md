@@ -1,7 +1,7 @@
 # Project Synapse
 
-Version: `v0.2.1`  
-Release Date: `2026-06-04`  
+Version: `v0.2.2`
+Release Date: `2026-06-04`
 Status: `Public research release candidate`
 
 Project Synapse is a research codebase for studying **resource-conditioned hypernetworks for modular task adaptation**. The core idea is to use a compact hypernetwork to generate lightweight task-specific parameters on demand, conditioned on task identity and runtime device context, while a cache-like memory module reuses previously successful parameter configurations.
@@ -54,7 +54,7 @@ The code currently explores that question through three architectural components
 
 ## Release Scope
 
-`v0.2.1` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
+`v0.2.2` is intended to provide a public-ready, reproducible research artifact on top of the broader research codebase. It is suitable for:
 
 1. Advisor review
 2. Early open-source release
@@ -216,16 +216,17 @@ This release includes:
 
 1. Research positioning: [04_RESEARCH_POSITIONING_v1.0.md](04_RESEARCH_POSITIONING_v1.0.md)
 2. Changelog: [CHANGELOG.md](CHANGELOG.md)
-3. Release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
-4. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
-5. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
-6. Verified public results: [RESULTS_v0.2.1.md](RESULTS_v0.2.1.md)
-7. Previous results note: [RESULTS_v0.2.0.md](RESULTS_v0.2.0.md)
+3. Release notes: [RELEASE_NOTES_v0.2.2.md](RELEASE_NOTES_v0.2.2.md)
+4. Previous release notes: [RELEASE_NOTES_v0.2.1.md](RELEASE_NOTES_v0.2.1.md)
+5. Previous release notes: [RELEASE_NOTES_v0.2.0.md](RELEASE_NOTES_v0.2.0.md)
+6. Previous alpha notes: [RELEASE_NOTES_v0.1.0-alpha.md](RELEASE_NOTES_v0.1.0-alpha.md)
+7. Verified public results: [RESULTS_v0.2.1.md](RESULTS_v0.2.1.md)
 8. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-9. Citation metadata: [CITATION.cff](CITATION.cff)
-10. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-11. Security policy: [SECURITY.md](SECURITY.md)
-12. Version marker: [VERSION](VERSION)
+9. Authors: [AUTHORS.md](AUTHORS.md)
+10. Citation metadata: [CITATION.cff](CITATION.cff)
+11. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+12. Security policy: [SECURITY.md](SECURITY.md)
+13. Version marker: [VERSION](VERSION)
 
 ## Recommended Interpretation
 
@@ -254,4 +255,8 @@ The current roadmap is:
 
 ## License
 
-The project is currently distributed under the MIT license in [01_LICENSE](01_LICENSE). The current copyright line uses the collective label `Project Synapse Contributors`, which is reasonable for a public release but should be adjusted if you want a single-person or institutional owner named explicitly.
+The project is distributed under the MIT license in [01_LICENSE](01_LICENSE).
+
+## Authorship And Citation
+
+The current public release is maintained by Syed Amir Hamza. Authorship details are listed in [AUTHORS.md](AUTHORS.md), and software citation metadata is provided in [CITATION.cff](CITATION.cff).

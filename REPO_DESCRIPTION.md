@@ -12,6 +12,8 @@ Project Synapse studies whether lightweight task parameters can be generated at 
 
 Project Synapse is a public research prototype for **resource-conditioned hypernetwork adaptation**. It is meant for researchers and students exploring modular task switching, edge-aware parameter generation, and cache-like recall of useful parameter states.
 
+Maintainer: Syed Amir Hamza, Hochschule Heilbronn.
+
 ## Suggested Repository Topics
 
 `hypernetworks`, `parameter-efficient-learning`, `edge-ai`, `continual-learning`, `multitask-learning`, `pytorch`, `research-software`

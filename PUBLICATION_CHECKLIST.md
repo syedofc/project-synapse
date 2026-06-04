@@ -1,6 +1,6 @@
 # Publication Checklist
 
-Current target release: `v0.2.1`
+Current target release: `v0.2.2`
 
 ## Repository Readiness
 
@@ -72,5 +72,5 @@ Then:
 2. Push `main`
 3. Create an annotated git tag: `git tag -a v0.2.1 -m "Project Synapse v0.2.1"`
 4. Push tags with `git push origin main --tags`
-5. Create a GitHub release using `GITHUB_RELEASE_DRAFT_v0.2.1.md`
+5. Create a GitHub release using the current versioned GitHub release draft
 6. Pin the quick-start and project-purpose summary in the repo description or a top issue
