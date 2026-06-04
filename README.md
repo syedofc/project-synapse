@@ -224,9 +224,10 @@ This release includes:
 8. Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 9. Authors: [AUTHORS.md](AUTHORS.md)
 10. Citation metadata: [CITATION.cff](CITATION.cff)
-11. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-12. Security policy: [SECURITY.md](SECURITY.md)
-13. Version marker: [VERSION](VERSION)
+11. Zenodo DOI setup: [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md)
+12. Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+13. Security policy: [SECURITY.md](SECURITY.md)
+14. Version marker: [VERSION](VERSION)
 
 ## Recommended Interpretation
 
@@ -260,3 +261,7 @@ The project is distributed under the MIT license in [01_LICENSE](01_LICENSE).
 ## Authorship And Citation
 
 The current public release is maintained by Syed Amir Hamza. Authorship details are listed in [AUTHORS.md](AUTHORS.md), and software citation metadata is provided in [CITATION.cff](CITATION.cff).
+
+## Zenodo And DOI
+
+This repository is ready for Zenodo-based software archiving through the GitHub integration. The exact setup steps are documented in [ZENODO_DOI_SETUP.md](ZENODO_DOI_SETUP.md).
